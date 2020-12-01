@@ -17,7 +17,29 @@ class BurgerBuilder extends Component {
             cheese: 0,
             meat: 0
         },
-        totalPrice: 3 //Price of a burger with no ingredients
+        totalPrice: 3, //Price of a burger with no ingredients
+        purchasable: false
+    }
+
+    updatePurchasable = (ingreds) => {
+        const ingredients = Object.keys(ingreds)
+         .map((igKey) => {
+            return ingreds[igKey]
+         })
+         .reduce((arr, el) => {
+            return arr + el
+         }, 0)
+
+         if (ingredients > 0) {
+             this.setState({
+                 purchasable: true
+             })
+         } else {
+            this.setState({
+                purchasable: false
+            })
+
+         }
     }
 
     addIngredientsHandler = (type) => {
@@ -31,6 +53,7 @@ class BurgerBuilder extends Component {
             ingredients: updatedIngredients,
             totalPrice: newTotalPrice
         })
+        this.updatePurchasable(updatedIngredients);
     }
 
     removeIngredientsHandler = (type) => {
@@ -48,21 +71,31 @@ class BurgerBuilder extends Component {
             ingredients: updatedIngredients,
             totalPrice: newTotalPrice
         })
+        this.updatePurchasable(updatedIngredients);
     }
 
     render() {
-        const disabledInfo = {
+        const disabledInfoRemove = {
             ...this.state.ingredients
         }
 
-        for (let key in disabledInfo) {
-            disabledInfo[key] = (this.state.ingredients[key] <= 0)
+        const disabledInfoAdd = {
+            ...this.state.ingredients
+        }
+
+        for (let key in disabledInfoRemove) {
+            disabledInfoRemove[key] = (this.state.ingredients[key] <= 0)
+        }
+
+        for (let key in disabledInfoAdd) {
+            disabledInfoAdd[key] = (this.state.ingredients[key] >= 3)
         }
         return (
         <Auxilliary>
             <Burger ingredients={this.state.ingredients} />
             <BuildControls ingredientAdd={this.addIngredientsHandler} ingredientRemove={this.removeIngredientsHandler}
-             disabled={disabledInfo} />
+             price={this.state.totalPrice} disabledRemove={disabledInfoRemove} disabledAdd={disabledInfoAdd}
+             purchasable ={this.state.purchasable} />
         </Auxilliary>
         );
     }
