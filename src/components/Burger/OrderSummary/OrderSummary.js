@@ -1,6 +1,7 @@
 import React from 'react';
 import Auxilliary from '../../../hoc/Auxilliary';
 import Button from '../../UI/Button/Button';
+import classes from './OrderSummary.css';
 const orderSummary = (props) => {
     const ingredientSummary = Object.keys(props.ingredients)
      .map(igKey => {
@@ -17,8 +18,10 @@ const orderSummary = (props) => {
             </ul>
     <p><strong>Total price : {props.price}</strong></p>
             <p>Please continue to checkout..</p>
+            <div className={classes.ButtonAlign}>
             <Button buttonType="Danger" clicked={props.cancelPurchase}>CANCEL</Button>
             <Button buttonType="Success" clicked={props.continuePurchase}>CONTINUE</Button>
+            </div>
         </Auxilliary>
     );
 }
