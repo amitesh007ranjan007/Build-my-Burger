@@ -1,11 +1,12 @@
 import React from 'react';
 import classes from './Burger.css';
-import BurgerIngredient from './BurgerIngredient/BurgerIngredient'
+import BurgerIngredient from './BurgerIngredient/BurgerIngredient';
+import { connect } from 'react-redux';
 
 const burger = (props) => {
 
-    let transformedIngredients = Object.keys(props.ingredients)
-    .map(igKey =>  [...Array(props.ingredients[igKey])].map((_, index) => {
+    let transformedIngredients = Object.keys(props.ings)
+    .map(igKey =>  [...Array(props.ings[igKey])].map((_, index) => {
         return <BurgerIngredient key={igKey+index} type={igKey} />
     })
     ).reduce((arr, el) => arr.concat(el), []);
@@ -22,4 +23,10 @@ const burger = (props) => {
     );
 }
 
-export default burger;
+const mapStateToProps = state => {
+    return {
+        ings: state.ingredients
+    }
+}
+
+export default connect(mapStateToProps)(burger);
