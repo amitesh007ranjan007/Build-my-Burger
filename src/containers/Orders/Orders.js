@@ -2,43 +2,44 @@ import React, { Component } from 'react';
 import axios from '../../axios-orders';
 import Order from './Order/Order';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import {connect} from 'react-redux';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import * as actions from '../../store/actions/index';
+
 class Orders extends Component {
-    state = {
-        orders: [],
-        loading: true
-    }
 
     componentDidMount() {
-        axios.get('https://react-burger-build-4455d-default-rtdb.firebaseio.com/orders.json')
-        .then(response => {
-            const fetchedOrders = [];
-            for (let key in response.data) {
-                fetchedOrders.push({
-                    ...response.data[key],
-                    id: key
-                })
-            }
-            this.setState({loading: false, orders: fetchedOrders});
-
-        })
-        .catch(error => {
-            this.setState({loading: false});
-        });
+        this.props.onFetchedOrders();
     }
 
     render() {
-        return (
-            <div>
-                {this.state.orders.map(order => (
-                    <Order key={order.id} 
-                    ingredients={order.ingredients}
-                    price={order.price}/>
-                ))}
-            </div>
-            
-        );
+        const summary = 
+        <div>
+        {this.props.orders.map(order => (
+            <Order key={order.id} 
+            ingredients={order.ingredients}
+            price={order.price}/>
+        ))}
+    </div>
+        const orderData = this.props.fetchedOrders ? summary : <Spinner />
+        return orderData
     }
 
 }
 
-export default withErrorHandler(Orders, axios);
+const mapStateToProps = state => {
+    return {
+        orders: state.order.order,
+        fetchedOrders: state.order.fetchedOrders
+
+
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onFetchedOrders: () => dispatch(actions.fetchOrdersInit())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withErrorHandler(Orders, axios));
